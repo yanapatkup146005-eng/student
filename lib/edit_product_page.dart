@@ -5,8 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 
-const String baseUrl =
-    "http://127.0.0.1/Student-Registration-App-main/php_api/";
+const String baseUrl = "http://127.0.0.1/Student/php_api/";
 
 class EdituserPage extends StatefulWidget {
   final dynamic user;
@@ -18,25 +17,25 @@ class EdituserPage extends StatefulWidget {
 }
 
 class _EdituserPageState extends State<EdituserPage> {
-
   late TextEditingController nameController;
   late TextEditingController emailController;
   late TextEditingController descController;
-
+  late TextEditingController facultyController;
   XFile? selectedImage;
 
   @override
   void initState() {
     super.initState();
 
-    nameController =
-        TextEditingController(text: widget.user['name']);
+    nameController = TextEditingController(text: widget.user['name']);
 
-    emailController =
-        TextEditingController(text: widget.user['email']);
+    emailController = TextEditingController(text: widget.user['email']);
 
-    descController =
-        TextEditingController(text: widget.user['phone']);
+    descController = TextEditingController(text: widget.user['phone']);
+
+    facultyController = TextEditingController(
+      text: widget.user['faculty'] ?? "",
+    );
   }
 
   ////////////////////////////////////////////////////////////
@@ -46,8 +45,7 @@ class _EdituserPageState extends State<EdituserPage> {
   Future<void> pickImage() async {
     final picker = ImagePicker();
 
-    final pickedFile =
-        await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -62,7 +60,6 @@ class _EdituserPageState extends State<EdituserPage> {
 
   Future<void> updateuser() async {
     try {
-
       var request = http.MultipartRequest(
         'POST',
         Uri.parse("${baseUrl}update_product_with_image.php"),
@@ -76,6 +73,7 @@ class _EdituserPageState extends State<EdituserPage> {
       request.fields['name'] = nameController.text;
       request.fields['email'] = emailController.text;
       request.fields['phone'] = descController.text;
+      request.fields['faculty'] = facultyController.text;
       request.fields['old_image'] = widget.user['image'];
 
       ////////////////////////////////////////////////////////
@@ -83,9 +81,7 @@ class _EdituserPageState extends State<EdituserPage> {
       ////////////////////////////////////////////////////////
 
       if (selectedImage != null) {
-
         if (kIsWeb) {
-
           final bytes = await selectedImage!.readAsBytes();
 
           request.files.add(
@@ -95,14 +91,9 @@ class _EdituserPageState extends State<EdituserPage> {
               filename: selectedImage!.name,
             ),
           );
-
         } else {
-
           request.files.add(
-            await http.MultipartFile.fromPath(
-              'image',
-              selectedImage!.path,
-            ),
+            await http.MultipartFile.fromPath('image', selectedImage!.path),
           );
         }
       }
@@ -117,14 +108,12 @@ class _EdituserPageState extends State<EdituserPage> {
       final data = json.decode(responseData);
 
       if (data["success"] == true) {
-
         Navigator.pop(context, true);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("แก้ไขเรียบร้อย")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("แก้ไขเรียบร้อย")));
       }
-
     } catch (e) {
       debugPrint("Update Error: $e");
     }
@@ -136,9 +125,7 @@ class _EdituserPageState extends State<EdituserPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    String imageUrl =
-        "${baseUrl}images/${widget.user['image']}";
+    String imageUrl = "${baseUrl}images/${widget.user['image']}";
 
     return Scaffold(
       appBar: AppBar(title: const Text("edit student")),
@@ -148,19 +135,15 @@ class _EdituserPageState extends State<EdituserPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-
               //////////////////////////////////////////////////
               // 🖼 IMAGE PREVIEW
               //////////////////////////////////////////////////
-
               GestureDetector(
                 onTap: pickImage,
                 child: Container(
                   height: 150,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                  ),
+                  decoration: BoxDecoration(border: Border.all()),
                   child: selectedImage == null
                       ? Image.network(
                           imageUrl,
@@ -169,14 +152,11 @@ class _EdituserPageState extends State<EdituserPage> {
                               const Icon(Icons.image_not_supported),
                         )
                       : kIsWeb
-                          ? Image.network(
-                              selectedImage!.path,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              File(selectedImage!.path),
-                              fit: BoxFit.cover,
-                            ),
+                      ? Image.network(selectedImage!.path, fit: BoxFit.cover)
+                      : Image.file(
+                          File(selectedImage!.path),
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
 
@@ -200,6 +180,10 @@ class _EdituserPageState extends State<EdituserPage> {
                 controller: descController,
                 decoration: const InputDecoration(labelText: "โทรศัพท์"),
               ),
+              TextField(
+                controller: facultyController,
+                decoration: const InputDecoration(labelText: "คณะ"),
+              ),
 
               const SizedBox(height: 20),
 
@@ -209,7 +193,7 @@ class _EdituserPageState extends State<EdituserPage> {
                   onPressed: updateuser,
                   child: const Text("บันทึก"),
                 ),
-              )
+              ),
             ],
           ),
         ),

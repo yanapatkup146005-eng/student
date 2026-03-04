@@ -6,6 +6,7 @@ header('Content-Type: application/json');
 $name = $_POST['name'];
 $email = $_POST['email'];
 $phone = $_POST['phone'];
+$faculty = $_POST['faculty'];
 
 ////////////////////////////////////////////////////////////
 // ✅ รับรูปภาพ
@@ -35,13 +36,14 @@ if (isset($_FILES['image'])) {
 try {
 
     $stmt = $conn->prepare("
-        INSERT INTO users ( name, email, phone, image)
-        VALUES ( :name, :email, :phone, :image)
+        INSERT INTO users (name, email, phone, faculty, image)
+    VALUES (:name, :email, :phone, :faculty, :image)
     ");
 
     $stmt->bindParam(":name", $name);
     $stmt->bindParam(":email", $_POST['email']);
     $stmt->bindParam(":phone", $_POST['phone']);
+    $stmt->bindParam(":faculty", $faculty);
     $stmt->bindParam(":image", $imageName);
 
     if ($stmt->execute()) {

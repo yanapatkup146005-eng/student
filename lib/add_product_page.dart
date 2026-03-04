@@ -13,7 +13,6 @@ class AddusersPage extends StatefulWidget {
 }
 
 class _AddusersPageState extends State<AddusersPage> {
-
   ////////////////////////////////////////////////////////////
   // ✅ Controllers
   ////////////////////////////////////////////////////////////
@@ -21,6 +20,7 @@ class _AddusersPageState extends State<AddusersPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController descController = TextEditingController();
+  final TextEditingController facultyController = TextEditingController();
 
   ////////////////////////////////////////////////////////////
   // ✅ Image (ใช้ XFile รองรับ Web)
@@ -31,9 +31,7 @@ class _AddusersPageState extends State<AddusersPage> {
   Future<void> pickImage() async {
     final picker = ImagePicker();
 
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -47,16 +45,15 @@ class _AddusersPageState extends State<AddusersPage> {
   ////////////////////////////////////////////////////////////
 
   Future<void> saveusers() async {
-
     if (selectedImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("กรุณาเลือกรูปภาพ")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("กรุณาเลือกรูปภาพ")));
       return;
     }
 
     final url = Uri.parse(
-      "http://localhost/Student-Registration-App-main/php_api/insert_product.php",
+      "http://localhost/Student/php_api/insert_product.php",
     );
 
     var request = http.MultipartRequest('POST', url);
@@ -68,13 +65,13 @@ class _AddusersPageState extends State<AddusersPage> {
     request.fields['name'] = nameController.text;
     request.fields['email'] = emailController.text;
     request.fields['phone'] = descController.text;
+    request.fields['faculty'] = facultyController.text;
 
     ////////////////////////////////////////////////////////////
     // ✅ Upload Image (แยก Web / Mobile)
     ////////////////////////////////////////////////////////////
 
     if (kIsWeb) {
-
       final bytes = await selectedImage!.readAsBytes();
 
       request.files.add(
@@ -84,14 +81,9 @@ class _AddusersPageState extends State<AddusersPage> {
           filename: selectedImage!.name,
         ),
       );
-
     } else {
-
       request.files.add(
-        await http.MultipartFile.fromPath(
-          'image',
-          selectedImage!.path,
-        ),
+        await http.MultipartFile.fromPath('image', selectedImage!.path),
       );
     }
 
@@ -105,18 +97,15 @@ class _AddusersPageState extends State<AddusersPage> {
     final data = json.decode(responseData);
 
     if (data["success"] == true) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("เพิ่มรายชื่อเรียบร้อย")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("เพิ่มรายชื่อเรียบร้อย")));
 
       Navigator.pop(context, true);
-
     } else {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${data["error"]}")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${data["error"]}")));
     }
   }
 
@@ -135,32 +124,26 @@ class _AddusersPageState extends State<AddusersPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-
               ////////////////////////////////////////////////////////////
               // 🖼 Image Preview (สำคัญมาก)
               ////////////////////////////////////////////////////////////
-
               GestureDetector(
                 onTap: pickImage,
                 child: Container(
                   height: 150,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                  ),
+                  decoration: BoxDecoration(border: Border.all()),
                   child: selectedImage == null
-                      ? const Center(
-                          child: Text("แตะเพื่อเลือกรูป"),
-                        )
+                      ? const Center(child: Text("แตะเพื่อเลือกรูป"))
                       : kIsWeb
-                          ? Image.network(
-                              selectedImage!.path, // ✅ Web
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              File(selectedImage!.path), // ✅ Mobile
-                              fit: BoxFit.cover,
-                            ),
+                      ? Image.network(
+                          selectedImage!.path, // ✅ Web
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(
+                          File(selectedImage!.path), // ✅ Mobile
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
 
@@ -169,7 +152,6 @@ class _AddusersPageState extends State<AddusersPage> {
               ////////////////////////////////////////////////////////////
               // 🏷 Name
               ////////////////////////////////////////////////////////////
-
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
@@ -183,9 +165,8 @@ class _AddusersPageState extends State<AddusersPage> {
               ////////////////////////////////////////////////////////////
               // 💰 email
               ////////////////////////////////////////////////////////////
-
               TextField(
-                controller: emailController,
+                controller: descController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: "เบอร์โทรศัพท์",
@@ -195,12 +176,21 @@ class _AddusersPageState extends State<AddusersPage> {
 
               const SizedBox(height: 15),
 
+              TextField(
+                controller: facultyController,
+                decoration: const InputDecoration(
+                  labelText: "คณะ",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+              const SizedBox(height: 15),
+
               ////////////////////////////////////////////////////////////
               // 📝 phone
               ////////////////////////////////////////////////////////////
-
               TextField(
-                controller: descController,
+                controller: emailController,
                 maxLines: 3,
                 decoration: const InputDecoration(
                   labelText: "อีเมล",
@@ -213,7 +203,6 @@ class _AddusersPageState extends State<AddusersPage> {
               ////////////////////////////////////////////////////////////
               // ✅ Button
               ////////////////////////////////////////////////////////////
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

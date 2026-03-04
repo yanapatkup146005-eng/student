@@ -19,6 +19,7 @@ try {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $oldImage = $_POST['old_image'];
+    $faculty = $_POST['faculty'];
 
     $imageName = $oldImage;
 
@@ -47,7 +48,9 @@ try {
             SET name = :name,
                 email = :email,
                 phone = :phone,
+                faculty = :faculty,
                 image = :image
+                
             WHERE id = :id";
 
     $stmt = $conn->prepare($sql);
@@ -56,6 +59,7 @@ try {
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':phone', $phone);
+    $stmt->bindParam(':faculty', $faculty);
     $stmt->bindParam(':image', $imageName);
 
     $stmt->execute();

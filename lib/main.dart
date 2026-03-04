@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 // ตรวจสอบให้แน่ใจว่าชื่อไฟล์และชื่อ Class ในไฟล์เหล่านี้ถูกต้อง
-import 'add_product_page.dart'; 
+import 'add_product_page.dart';
 import 'edit_product_page.dart';
 
 void main() => runApp(const MyApp());
@@ -12,7 +12,7 @@ void main() => runApp(const MyApp());
 // ✅ CONFIG
 //////////////////////////////////////////////////////////////
 
-const String baseUrl = "http://127.0.0.1/Student-Registration-App-main/php_api/";
+const String baseUrl = "http://127.0.0.1/Student/php_api/";
 
 //////////////////////////////////////////////////////////////
 // ✅ APP ROOT
@@ -92,9 +92,9 @@ class _UserListState extends State<UserList> {
       if (data["success"] == true) {
         fetchUsers();
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("ลบข้อมูลเรียบร้อย")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("ลบข้อมูลเรียบร้อย")));
       }
     } catch (e) {
       debugPrint("Delete Error: $e");
@@ -130,7 +130,9 @@ class _UserListState extends State<UserList> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) =>  EdituserPage(user: user), // ตรวจสอบว่าในไฟล์ EditProductPage รับค่าชื่อ users จริงหรือไม่
+        builder: (_) => EdituserPage(
+          user: user,
+        ), // ตรวจสอบว่าในไฟล์ EditProductPage รับค่าชื่อ users จริงหรือไม่
       ),
     ).then((value) => fetchUsers());
   }
@@ -167,7 +169,10 @@ class _UserListState extends State<UserList> {
                       String imageUrl = "${baseUrl}images/${user['image']}";
 
                       return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
                         child: ListTile(
                           leading: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
@@ -183,7 +188,13 @@ class _UserListState extends State<UserList> {
                             ),
                           ),
                           title: Text(user['name'] ?? 'No Name'),
-                          subtitle: Text(user['phone'] ?? 'No Phone'),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("email: ${user['email'] ?? '-'}"),
+                              Text("คณะ: ${user['faculty'] ?? '-'}"),
+                            ],
+                          ),
                           trailing: PopupMenuButton<String>(
                             onSelected: (value) {
                               if (value == 'edit') {
@@ -193,7 +204,10 @@ class _UserListState extends State<UserList> {
                               }
                             },
                             itemBuilder: (_) => const [
-                              PopupMenuItem(value: 'edit', child: Text('แก้ไข')),
+                              PopupMenuItem(
+                                value: 'edit',
+                                child: Text('แก้ไข'),
+                              ),
                               PopupMenuItem(value: 'delete', child: Text('ลบ')),
                             ],
                           ),
@@ -219,7 +233,7 @@ class _UserListState extends State<UserList> {
             context,
             MaterialPageRoute(
               // ตรวจสอบชื่อ Class ในไฟล์ add_product_page.dart ว่าชื่อ AddProductPage หรือไม่
-              builder: (_) => const AddusersPage(), 
+              builder: (_) => const AddusersPage(),
             ),
           ).then((value) => fetchUsers());
         },
@@ -266,9 +280,20 @@ class UserDetail extends StatelessWidget {
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const Divider(),
-            Text("เบอร์โทรศัพท์: ${user['phone'] ?? '-'}", style: const TextStyle(fontSize: 18)),
+            Text(
+              "เบอร์โทรศัพท์: ${user['phone'] ?? '-'}",
+              style: const TextStyle(fontSize: 18),
+            ),
             const SizedBox(height: 10),
-            Text("อีเมล: ${user['email'] ?? '-'}", style: const TextStyle(fontSize: 18)),
+            Text(
+              "อีเมล: ${user['email'] ?? '-'}",
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "คณะ: ${user['faculty'] ?? '-'}",
+              style: const TextStyle(fontSize: 18),
+            ),
           ],
         ),
       ),
