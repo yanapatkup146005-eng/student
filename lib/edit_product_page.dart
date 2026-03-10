@@ -20,7 +20,6 @@ class _EdituserPageState extends State<EdituserPage> {
   late TextEditingController nameController;
   late TextEditingController emailController;
   late TextEditingController descController;
-  late TextEditingController facultyController;
   XFile? selectedImage;
 
   @override
@@ -33,9 +32,6 @@ class _EdituserPageState extends State<EdituserPage> {
 
     descController = TextEditingController(text: widget.user['phone']);
 
-    facultyController = TextEditingController(
-      text: widget.user['faculty'] ?? "",
-    );
   }
 
   ////////////////////////////////////////////////////////////
@@ -73,7 +69,6 @@ class _EdituserPageState extends State<EdituserPage> {
       request.fields['name'] = nameController.text;
       request.fields['email'] = emailController.text;
       request.fields['phone'] = descController.text;
-      request.fields['faculty'] = facultyController.text;
       request.fields['old_image'] = widget.user['image'];
 
       ////////////////////////////////////////////////////////
@@ -180,11 +175,6 @@ class _EdituserPageState extends State<EdituserPage> {
                 controller: descController,
                 decoration: const InputDecoration(labelText: "โทรศัพท์"),
               ),
-              TextField(
-                controller: facultyController,
-                decoration: const InputDecoration(labelText: "คณะ"),
-              ),
-
               const SizedBox(height: 20),
 
               SizedBox(

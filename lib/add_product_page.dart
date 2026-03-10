@@ -20,7 +20,7 @@ class _AddusersPageState extends State<AddusersPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController descController = TextEditingController();
-  final TextEditingController facultyController = TextEditingController();
+
 
   ////////////////////////////////////////////////////////////
   // ✅ Image (ใช้ XFile รองรับ Web)
@@ -65,7 +65,6 @@ class _AddusersPageState extends State<AddusersPage> {
     request.fields['name'] = nameController.text;
     request.fields['email'] = emailController.text;
     request.fields['phone'] = descController.text;
-    request.fields['faculty'] = facultyController.text;
 
     ////////////////////////////////////////////////////////////
     // ✅ Upload Image (แยก Web / Mobile)
@@ -176,15 +175,9 @@ class _AddusersPageState extends State<AddusersPage> {
 
               const SizedBox(height: 15),
 
-              TextField(
-                controller: facultyController,
-                decoration: const InputDecoration(
-                  labelText: "คณะ",
-                  border: OutlineInputBorder(),
-                ),
-              ),
+          
 
-              const SizedBox(height: 15),
+            
 
               ////////////////////////////////////////////////////////////
               // 📝 phone

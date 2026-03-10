@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_product_image/login.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'login.dart';
 
 // ตรวจสอบให้แน่ใจว่าชื่อไฟล์และชื่อ Class ในไฟล์เหล่านี้ถูกต้อง
 import 'add_product_page.dart';
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       // เปลี่ยนจาก userList() เป็น UserList()
-      home: UserList(),
+      home: LoginPage(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -36,7 +38,9 @@ class MyApp extends StatelessWidget {
 //////////////////////////////////////////////////////////////
 
 class UserList extends StatefulWidget {
-  const UserList({super.key});
+  final String name;
+  const UserList({super.key,required this.name});
+  
 
   @override
   State<UserList> createState() => _UserListState();
@@ -140,7 +144,30 @@ class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('student List')),
+      appBar: AppBar(title: const Text('student List'),
+      actions: [
+         Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Text("Welcome ${widget.name}"),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ),
+                (route) => false,
+              );
+
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           // 🔍 SEARCH
@@ -192,7 +219,7 @@ class _UserListState extends State<UserList> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text("email: ${user['email'] ?? '-'}"),
-                              Text("คณะ: ${user['faculty'] ?? '-'}"),
+                      
                             ],
                           ),
                           trailing: PopupMenuButton<String>(
@@ -290,10 +317,8 @@ class UserDetail extends StatelessWidget {
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 10),
-            Text(
-              "คณะ: ${user['faculty'] ?? '-'}",
-              style: const TextStyle(fontSize: 18),
-            ),
+          
+            
           ],
         ),
       ),

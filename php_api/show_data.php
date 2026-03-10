@@ -3,7 +3,7 @@ include "condb.php";
 
 try {
 
-    $stmt = $conn->query("SELECT id, name, phone, email, faculty, image FROM users");
+    $stmt = $conn->query("SELECT id, name, phone, email, image FROM users");
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($users);
     
